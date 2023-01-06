@@ -15,6 +15,6 @@ module.exports = {
         'migrations'
       )
     },
-    useNullDefault: true
+    useNullAsDefault: true
   }
 }

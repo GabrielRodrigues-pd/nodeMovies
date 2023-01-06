@@ -7,6 +7,8 @@ class UsersController {
     if (!name || !email || !password) {
       throw new AppError('Missing required fields', 400)
     }
+
+    return res.json({ name, email, password })
   }
 }
 
