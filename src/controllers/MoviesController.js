@@ -6,7 +6,7 @@ class MoviesController {
     const user_id = req.user.id
 
     // inserindo moveis e recuperando o id
-    const movies_id = await knex('movies').insert({
+    const movie_id = await knex('movies').insert({
       title,
       description,
       rating,
@@ -15,7 +15,7 @@ class MoviesController {
 
     const tagsInsert = tags.map(name => {
       return {
-        movies_id,
+        movie_id,
         user_id,
         name
       }
@@ -31,7 +31,7 @@ class MoviesController {
 
     const movie = await knex('movies').where({ id }).first()
 
-    const tags = await knex('tags').where({ movies_id: id }).orderBy('name')
+    const tags = await knex('tags').where({ movie_id: id }).orderBy('name')
 
     return res.json({
       ...movie,
@@ -40,14 +40,49 @@ class MoviesController {
   }
 
   async delete(req, res) {
-    const user_id = req.user.id
+    const { id } = req.params
 
-    await knex('movies').where({ user_id }).delete()
+    await knex('movies').where({ id }).delete()
 
     return res.status(201).json()
   }
 
-  async index(req, res) {}
+  async index(req, res) {
+    const { title, tags } = req.query
+
+    const user_id = req.user.id
+
+    let movies
+
+    if (tags) {
+      const filterTags = tags.split(',').map(tag => tag.trim())
+
+      movies = await knex('tags')
+        .select(['movies.id', 'movies.title', 'movies.user_id'])
+        .where('movies.user_id', user_id)
+        .whereLike('movies.title', `%${title}%`)
+        .whereIn('name', filterTags)
+        .innerJoin('movies', 'movies.id', 'tags.movie_id')
+        .orderBy('movies.title')
+    } else {
+      movies = await knex('movies')
+        .where({ user_id })
+        .whereLike('title', `%${title}%`)
+        .orderBy('title')
+    }
+
+    const userTags = await knex('tags').where({ user_id })
+    const moviesWithTags = movies.map(movie => {
+      const movieTags = userTags.filter(tag => tag.movie_id === movie.id)
+
+      return {
+        ...movie,
+        tags: movieTags
+      }
+    })
+
+    return res.json(moviesWithTags)
+  }
 }
 
 module.exports = MoviesController
