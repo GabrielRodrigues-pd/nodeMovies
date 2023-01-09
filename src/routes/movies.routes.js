@@ -10,7 +10,7 @@ moviesRoutes.use(ensureAuthenticated)
 
 moviesRoutes.post('/', moviesController.create)
 moviesRoutes.get('/:id', moviesController.show)
-moviesRoutes.delete('/:id', moviesController.delete)
+moviesRoutes.delete('/', moviesController.delete)
 moviesRoutes.get('/:id', moviesController.index)
 
 module.exports = moviesRoutes

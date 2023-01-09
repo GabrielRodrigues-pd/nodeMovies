@@ -26,9 +26,26 @@ class MoviesController {
     return res.status(201).json()
   }
 
-  async show(req, res) {}
+  async show(req, res) {
+    const { id } = req.params
 
-  async delete(req, res) {}
+    const movie = await knex('movies').where({ id }).first()
+
+    const tags = await knex('tags').where({ movies_id: id }).orderBy('name')
+
+    return res.json({
+      ...movie,
+      tags
+    })
+  }
+
+  async delete(req, res) {
+    const user_id = req.user.id
+
+    await knex('movies').where({ user_id }).delete()
+
+    return res.status(201).json()
+  }
 
   async index(req, res) {}
 }
