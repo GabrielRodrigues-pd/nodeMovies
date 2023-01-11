@@ -61,14 +61,15 @@ class UsersController {
       }
 
       user.password = await hash(password, 8)
-      await knex('users')
-        .update({
-          name: user.name,
-          email: user.email,
-          password: user.password
-        })
-        .where({ id })
     }
+
+    await knex('users')
+      .update({
+        name,
+        email,
+        password: user.password
+      })
+      .where({ id })
 
     return res.status(201).json()
   }
