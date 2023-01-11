@@ -11,13 +11,6 @@ class UsersController {
     // tirando espaços do email
     const Email = email.trim()
 
-    if (
-      Email.includes('@gmail.com') === false ||
-      Email.includes('@hotmail.com') == false
-    ) {
-      throw new AppError('Email inválido', 400)
-    }
-
     const checkUsersExists = await knex('users').where({ email: Email }).first()
 
     if (checkUsersExists) {
