@@ -69,6 +69,14 @@ class MoviesController {
         .where({ user_id })
         .whereLike('title', `%${title}%`)
         .orderBy('title')
+
+      if (movies.length <= 0) {
+        movies = await knex('tags')
+          .where('movies.user_id', user_id)
+          .whereIn('name', [title])
+          .innerJoin('movies', 'movies.id', 'tags.movie_id')
+          .orderBy('movies.title')
+      }
     }
 
     const userTags = await knex('tags').where({ user_id })
