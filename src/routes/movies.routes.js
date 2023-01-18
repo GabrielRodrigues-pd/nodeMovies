@@ -8,9 +8,10 @@ const moviesController = new MoviesController()
 
 moviesRoutes.use(ensureAuthenticated)
 
-moviesRoutes.get('/', moviesController.index)
 moviesRoutes.post('/', moviesController.create)
-moviesRoutes.get('/:id', moviesController.show)
 moviesRoutes.delete('/:id', moviesController.delete)
+moviesRoutes.get('/:id', moviesController.show)
+moviesRoutes.get('/', moviesController.index)
+moviesRoutes.put('/', moviesController.update)
 
 module.exports = moviesRoutes
