@@ -103,40 +103,6 @@ class MoviesController {
 
     return res.json(moviesWithTags)
   }
-
-  async update(req, res) {
-    const { id, title, description, rating, tags } = req.body
-    const user_id = req.user.id
-
-    const movieExist = await knex('movies').where({ id }).first()
-
-    if (!movieExist) {
-      throw new AppError('Não foi possível encontrar o filme')
-    }
-
-    const updated_at = knex.fn.now()
-
-    await knex('movies').where({ id }).where({ user_id }).update({
-      title,
-      description,
-      rating,
-      updated_at
-    })
-
-    await knex('tags').where({ movie_id: id }).delete()
-
-    const tagsInsert = tags.map(name => {
-      return {
-        movie_id: id,
-        name,
-        user_id
-      }
-    })
-
-    await knex('tags').insert(tagsInsert)
-
-    return res.json()
-  }
 }
 
 module.exports = MoviesController
