@@ -11,6 +11,10 @@ class UsersController {
     // tirando espaços do email
     const Email = email.trim()
 
+    if (!Email.includes('@')) {
+      throw new AppError('Insira um email válido.', 400)
+    }
+
     const checkUsersExists = await knex('users').where({ email: Email }).first()
 
     if (checkUsersExists) {
@@ -42,6 +46,10 @@ class UsersController {
 
     if (userWithUpdatedEmail && userWithUpdatedEmail.id !== user.id) {
       throw new AppError('Este e-mail já está em uso')
+    }
+
+    if (!email.includes('@')) {
+      throw new AppError('Insira um email válido.', 400)
     }
 
     user.name = name ?? user.name
